@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
  * 步骤：
  * 1、构建管道对象，利用 **Ops 对象添加 Redis 操作，添加操作会返回 Supplier 函数
  * 2、利用 Supplier 函数获取对应操作返回值
- * 3、调用用 Supplier 函数或者执行 excute() 都会提交管道中的操作
+ * 3、调用 Supplier 函数或者执行 excute() 都会提交管道中的操作
  *
  * @author LiuBing
  * @date 2021/1/22
