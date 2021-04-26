@@ -22,7 +22,7 @@ public abstract class AbstractJedisOps {
 	 * @return true：成功执行，false：管道中无操作
 	 */
 	public boolean execute() {
-		return jedisPipeline.excute();
+		return jedisPipeline.execute();
 	}
 
 	AbstractJedisOps(JedisPipeline jedisPipeline) {

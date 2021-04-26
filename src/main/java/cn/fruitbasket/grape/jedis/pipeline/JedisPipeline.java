@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
  * 步骤：
  * 1、构建管道对象，利用 **Ops 对象添加 Redis 操作，添加操作会返回 Supplier 函数
  * 2、利用 Supplier 函数获取对应操作返回值
- * 3、调用 Supplier 函数或者执行 excute() 都会提交管道中的操作
+ * 3、调用 Supplier 函数或者执行 execute() 都会提交管道中的操作
  *
  * @author LiuBing
  * @date 2021/1/22
@@ -63,7 +63,7 @@ public class JedisPipeline {
      *
      * @return true：成功执行，false：管道中无操作
      */
-    public boolean excute() {
+    public boolean execute() {
         if (this.operationSetterQueue.isEmpty()) {
             return false;
         }
@@ -126,7 +126,7 @@ public class JedisPipeline {
         this.operationSetterQueue.offer(operationSetter);
         int resultIndex = this.opsResultIndex++;
         return () -> {
-            if (resultIndex >= this.opsResults.size()) this.excute();
+            if (resultIndex >= this.opsResults.size()) this.execute();
             return (T) opsResults.get(resultIndex);
         };
     }
