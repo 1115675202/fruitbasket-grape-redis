@@ -1,6 +1,5 @@
 package cn.fruitbasket.grape.redis.pipeline;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -156,7 +155,7 @@ public class StringRedisPipeline {
     private List<Object> executeWithPipeline(List<Consumer<RedisOperations>> operationSetters) {
         return this.stringRedisTemplate.executePipelined(new SessionCallback<Object>() {
             @Override
-            public Object execute(RedisOperations operations) throws DataAccessException {
+            public Object execute(RedisOperations operations) {
                 operationSetters.forEach(operationSetter -> operationSetter.accept(operations));
                 return null;
             }
