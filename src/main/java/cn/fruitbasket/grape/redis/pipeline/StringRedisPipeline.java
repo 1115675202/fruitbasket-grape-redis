@@ -1,4 +1,4 @@
-package cn.fruitbasket.grape.jedis.pipeline;
+package cn.fruitbasket.grape.redis.pipeline;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Jedis 管道操作，利用一次与Redis服务器交互，执行多个操作并获取返回结果
+ * Redis 管道操作，利用一次与Redis服务器交互，执行多个操作并获取返回结果
  * 步骤：
  * 1、构建管道对象，利用 **Ops 对象添加 Redis 操作，添加操作会返回 Supplier 函数
  * 2、利用 Supplier 函数获取对应操作返回值
@@ -21,7 +21,7 @@ import static java.util.Objects.requireNonNull;
  * @author LiuBing
  * @date 2021/1/22
  */
-public class JedisPipeline {
+public class StringRedisPipeline {
 
     /**
      * 为了避免一次性执行的操作数太多，占用过多 Redis 服务器缓存空间。程序会按批次提交，这个值代表一批操作最大数量
@@ -33,33 +33,36 @@ public class JedisPipeline {
     /**
      * 操作队列
      */
-    private Queue<Consumer<RedisOperations>> operationSetterQueue;
+    private final Queue<Consumer<RedisOperations>> operationSetterQueue;
 
     /**
      * 操作结果
      */
-    private List<Object> opsResults;
+    private final List<Object> opsResults;
 
     /**
      * 操作结果索引
      */
     private int opsResultIndex;
 
-    private ValueOps valueOps;
-    private HashOps hashOps;
-    private ListOps listOps;
-    private SetOps setOps;
-    private ZSetOps zSetOps;
+    private ValueOperations valueOperations;
+    private HashOperations hashOperations;
+    private ListOperations listOperations;
+    private SetOperations setOperations;
+    private ZSetOperations zSetOperations;
+    private HyperLogLogOperations hyperLogLogOperations;
+    private GeoOperations geoOperations;
+    private StreamOperations streamOperations;
 
     /**
      * 构建一个管道对象
      */
-    public static JedisPipeline build(StringRedisTemplate stringRedisTemplate) {
-        return new JedisPipeline(requireNonNull(stringRedisTemplate));
+    public static StringRedisPipeline build(StringRedisTemplate stringRedisTemplate) {
+        return new StringRedisPipeline(requireNonNull(stringRedisTemplate));
     }
 
     /**
-     * 利用 Jedis Pipeline 执行所有操作
+     * Pipeline 执行所有操作
      *
      * @return true：成功执行，false：管道中无操作
      */
@@ -77,49 +80,49 @@ public class JedisPipeline {
     /**
      * 删除Key
      */
-    public JedisPipeline delete(String key) {
+    public StringRedisPipeline delete(String key) {
         addOperation(operations -> operations.delete(key));
         return this;
     }
 
-    /**
-     * 普通（String）类型的数据操作
-     */
-    public ValueOps opsForValue() {
-        if (valueOps == null) valueOps = new ValueOps(this);
-        return valueOps;
+    public ValueOperations opsForValue() {
+        if (valueOperations == null) valueOperations = new ValueOperations(this);
+        return valueOperations;
     }
 
-    /**
-     * Hash 类型的数据操作
-     */
-    public HashOps opsForHash() {
-        if (hashOps == null) hashOps = new HashOps(this);
-        return hashOps;
+    public HashOperations opsForHash() {
+        if (hashOperations == null) hashOperations = new HashOperations(this);
+        return hashOperations;
     }
 
-    /**
-     * 列表 类型的数据操作
-     */
-    public ListOps opsForList() {
-        if (listOps == null) listOps = new ListOps(this);
-        return listOps;
+    public ListOperations opsForList() {
+        if (listOperations == null) listOperations = new ListOperations(this);
+        return listOperations;
     }
 
-    /**
-     * Set 类型的数据操作
-     */
-    public SetOps opsForSet() {
-        if (setOps == null) setOps = new SetOps(this);
-        return setOps;
+    public SetOperations opsForSet() {
+        if (setOperations == null) setOperations = new SetOperations(this);
+        return setOperations;
     }
 
-    /**
-     * ZSet 类型的数据操作
-     */
-    public ZSetOps opsForZSet() {
-        if (zSetOps == null) zSetOps = new ZSetOps(this);
-        return zSetOps;
+    public ZSetOperations opsForZSet() {
+        if (zSetOperations == null) zSetOperations = new ZSetOperations(this);
+        return zSetOperations;
+    }
+
+    public HyperLogLogOperations opsForHyperLogLog() {
+        if (hyperLogLogOperations == null) hyperLogLogOperations = new HyperLogLogOperations(this);
+        return hyperLogLogOperations;
+    }
+
+    public GeoOperations opsForGeo() {
+        if (geoOperations == null) geoOperations = new GeoOperations(this);
+        return geoOperations;
+    }
+
+    public StreamOperations opsForStream() {
+        if (streamOperations == null) streamOperations = new StreamOperations(this);
+        return streamOperations;
     }
 
     <T> Supplier<T> addOperation(Consumer<RedisOperations> operationSetter) {
@@ -146,12 +149,12 @@ public class JedisPipeline {
     }
 
     /**
-     * 通过 Jedis 管道执行所有操作
+     * 通过 Redis 管道执行所有操作
      *
      * @return 操作结果
      */
     private List<Object> executeWithPipeline(List<Consumer<RedisOperations>> operationSetters) {
-        return this.stringRedisTemplate.executePipelined(new SessionCallback() {
+        return this.stringRedisTemplate.executePipelined(new SessionCallback<Object>() {
             @Override
             public Object execute(RedisOperations operations) throws DataAccessException {
                 operationSetters.forEach(operationSetter -> operationSetter.accept(operations));
@@ -160,7 +163,7 @@ public class JedisPipeline {
         });
     }
 
-    private JedisPipeline(StringRedisTemplate stringRedisTemplate) {
+    private StringRedisPipeline(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = requireNonNull(stringRedisTemplate);
         this.operationSetterQueue = new LinkedList<>();
         this.opsResults = new ArrayList<>();
