@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.fruitbasket</groupId>
-    <artifactId>fruitbasket-grape-jedis</artifactId>
+    <artifactId>fruitbasket-grape-redis</artifactId>
     <version>0.0.1</version>
-    <name>fruitbasket-grape-jedis</name>
+    <name>fruitbasket-grape-redis</name>
     <description>Tools for Redis</description>
 
     <properties>
