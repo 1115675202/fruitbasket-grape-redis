@@ -1,7 +1,7 @@
 Jedis Pipeline 工具
 ===
 ## 简介
-* 项目基于 Jedis Pipeline 进行了进一步封装，简洁易用灵活
+* 项目基于 Spring Redis Pipeline 进行了进一步封装，简洁易用灵活
 ## 环境及依赖
 Jdk 1.8
 ## 运行步骤
