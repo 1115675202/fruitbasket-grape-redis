@@ -1,7 +1,7 @@
 Jedis Pipeline 工具
 ===
 ## 简介
-* 项目基于 Jedis Pipeline 进行了进一步封装，使其简介易用不失灵活性
+* 项目基于 Jedis Pipeline 进行了进一步封装，简洁易用灵活
 ## 环境及依赖
 Jdk 1.8
 ## 运行步骤
@@ -15,5 +15,5 @@ cn.fruitbasket.grape.jedis.pipeline
 ├── ListOps.java                     对应类型操作
 ├── SetOps.java                      对应类型操作
 ├── ValueOps.java                    对应类型操作
-└── ZSetOps.java                     对应类型操作使用示例
+└── ZSetOps.java                     对应类型操作
 ```
