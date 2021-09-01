@@ -1,4 +1,4 @@
-Jedis Pipeline 工具
+Redis Pipeline 工具
 ===
 ## 简介
 * 项目基于 Spring Redis Pipeline 进行了进一步封装，简洁易用灵活
