@@ -5,15 +5,13 @@ Jedis Pipeline 工具
 ## 环境及依赖
 Jdk 1.8
 ## 运行步骤
-
+StringRedisPipelineTest 执行测试
 ## 目录结构描述
 ``` lua
 cn.fruitbasket.grape.jedis.pipeline
 ├── AbstractJedisOps.java            操作抽象
-├── JedisPipeline.java               经封装后给外部调用的管道对象
+├── StringRedisPipeline.java               经封装后给外部调用的管道对象
 ├── HashOps.java                     对应类型操作
 ├── ListOps.java                     对应类型操作
-├── SetOps.java                      对应类型操作
-├── ValueOps.java                    对应类型操作
-└── ZSetOps.java                     对应类型操作
+└── ...                              对应类型操作
 ```
