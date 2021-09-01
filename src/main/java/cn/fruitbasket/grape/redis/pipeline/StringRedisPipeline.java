@@ -25,7 +25,7 @@ public class StringRedisPipeline {
     /**
      * 为了避免一次性执行的操作数太多，占用过多 Redis 服务器缓存空间。程序会按批次提交，这个值代表一批操作最大数量
      */
-    private static final int OPERATION_BATCH_SIZE = 10;
+    private static final int OPERATION_BATCH_SIZE = 50;
 
     private final StringRedisTemplate stringRedisTemplate;
 
@@ -77,11 +77,25 @@ public class StringRedisPipeline {
     }
 
     /**
-     * 删除Key
+     * {@link RedisOperations#delete(Object)}
      */
     public StringRedisPipeline delete(String key) {
         addOperation(operations -> operations.delete(key));
         return this;
+    }
+
+    /**
+     * {@link RedisOperations#delete(Collection)}
+     */
+    public Supplier<Long> delete(Collection<String> keys) {
+        return addOperation(operations -> operations.delete(keys));
+    }
+
+    /**
+     * {@link RedisOperations#keys(Object)}
+     */
+    public Supplier<Set<String>> keys(String pattern) {
+        return addOperation(operations -> operations.keys(pattern));
     }
 
     public ValueOperations opsForValue() {
