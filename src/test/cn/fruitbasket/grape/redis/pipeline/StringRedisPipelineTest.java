@@ -28,6 +28,9 @@ class StringRedisPipelineTest {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    /**
+     * 部分无返回值的操作可以采用流式编程调用管道
+     */
     @Test
     void add() {
         StringRedisPipeline jedisPipeline = StringRedisPipeline.build(stringRedisTemplate);
@@ -40,6 +43,9 @@ class StringRedisPipelineTest {
                 .execute();
     }
 
+    /**
+     * 多个获取返回值的操作通过管道执行
+     */
     @Test
     void get() {
         StringRedisPipeline jedisPipeline = StringRedisPipeline.build(stringRedisTemplate);
